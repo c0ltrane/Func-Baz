@@ -1,0 +1,160 @@
+Package baz.syntax;
+
+Helpers
+
+  string_char = [[32..126] - '"'];
+  not_eol = [[0..0xffff] - [10 + 13]];
+
+  digit = ['0'..'9'];
+  letter = ['a'..'z'];
+
+Tokens
+
+  semi = ';';
+  assign = '=';
+  eq = '==';
+  neq = '!=';
+  lt = '<';
+  gt = '>';
+  lteq = '<=';
+  gteq = '>=';
+  plus = '+';
+  minus = '-';
+  l_brace = '{';
+  r_brace = '}';
+  l_par = '(';
+  r_par = ')';
+  and = '&&';
+  or = '||';
+  not = '!';
+  star = '*';
+  slash = '/';
+  percent = '%';
+  comma = ',';
+  colon = ':';
+
+  do = 'do';
+  else = 'else';
+  fun = 'fun';
+  if = 'if';
+  print = 'print';
+  return = 'return';
+  then = 'then';
+  while = 'while';
+  bool = 'bool';
+  int = 'int';
+  string = 'string';
+  closure = 'closure';
+  true = 'true';
+  false = 'false';
+  var = 'var';
+
+  string_literal = '"' string_char* '"';
+
+  id = letter (letter | digit)*;
+  number = digit+;
+
+  blank = (' ' | 13 | 10)+;
+  comment = '#' not_eol*;
+
+Ignored Tokens
+
+  blank, comment;
+
+Productions
+
+  program =
+    [funcs]:func* block;
+
+  func =
+    fun [name]:id l_par params? r_par return_type? block;
+
+  params =
+    param [additional_params]:additional_param*;
+
+  additional_param =
+    comma param;
+
+  param =
+    id colon type;
+
+  return_type =
+    colon type;
+
+  type =
+    {bool} bool |
+    {int} int |
+    {string} string |
+    {closure} closure;
+
+  block =
+    l_brace [insts]:inst* r_brace;
+
+  inst =
+    {declaration} var id assign exp semi |
+    {exp} exp semi |
+    {if} if exp then block else_part? |
+    {while} while exp do block |
+    {print} print exp? semi |
+    {return} return exp? semi |
+    {block} block;
+
+  else_part =
+    else block;
+
+  exp =
+    {assign} id assign exp |
+    {simple} choice;
+
+  choice =
+    {or} [left]:choice or [right]:conjunction |
+    {simple} conjunction;
+
+  conjunction =
+    {and} [left]:conjunction and [right]:equality |
+    {simple} equality;
+
+  equality =
+    {eq} [left]:equality eq [right]:relative |
+    {neq} [left]:equality neq [right]:relative |
+    {simple} relative;
+
+  relative =
+    {lt} [left]:relative lt [right]:additive |
+    {lteq} [left]:relative lteq [right]:additive |
+    {gt} [left]:relative gt [right]:additive |
+    {gteq} [left]:relative gteq [right]:additive |
+    {simple} additive;
+
+  additive =
+    {add} [left]:additive plus [right]:factor |
+    {sub} [left]:additive minus [right]:factor |
+    {simple} factor;
+
+  factor =
+    {mul} [left]:factor star [right]:unary |
+    {div} [left]:factor slash [right]:unary |
+    {mod} [left]:factor percent [right]:unary |
+    {simple} unary;
+
+  unary =
+    {pos} plus unary |
+    {neg} minus unary |
+    {not} not unary |
+    {simple} term;
+
+  term =
+    {var} id |
+    {num} number |
+    {string} string_literal |
+    {true} true |
+    {false} false |
+    {par} l_par exp r_par |
+    {call} id l_par args? r_par | 
+    {lambda} fun l_par params? r_par block;
+
+  args =
+    exp [additional_args]:additional_arg*;
+
+  additional_arg =
+    comma exp;

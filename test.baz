@@ -1,0 +1,46 @@
+# Premier programme Baz!!!
+
+fun foo(n: int): int {
+  var x = 0;
+
+  while n < 100 do {
+    x = x + n;
+    n = n + 1;
+  }
+  return x;
+}
+
+{
+  print "Hello world!";
+  print ;
+
+  var n = 3;
+  
+# exemple closure
+#fun timesTwo(param: int): closure{
+#	var i = 2;
+#	return fun(i: int, param: int): int {i*param};
+#} 
+
+#closure = timesTwo(5);
+#closure();
+
+#fun greet(name: string){	
+#}
+
+#fun add(): closure{
+#	var p = 0;
+#	return fun(){p = p + 1};
+#}
+
+#var addOne = add();
+#addOne();
+
+  if n < 10 then {
+    print "this is a small number!";
+    print;
+  }
+
+  print "The result is: " + foo(n);
+  print;
+}

@@ -48,6 +48,22 @@ public class FunctionInfo {
     
     public FunctionInfo(ClosureInfo closureInfo){
     	addParams(closureInfo.getClosureDefinition().getParams());
+    	ALambdaTerm node = closureInfo.getClosureDefinition();
+    	if (node.getReturnType() != null) {
+
+            node.getReturnType().apply(new DepthFirstAdapter() {
+
+                @Override
+                public void caseAReturnType(
+                        AReturnType node) {
+
+                    FunctionInfo.this.returnType = Type.get(node.getType());
+                }
+            });
+        }
+        else {
+            this.returnType = VOID;
+        }
     	
     }
     
@@ -116,6 +132,10 @@ public class FunctionInfo {
         for (Declaration declaration : this.params) {
             scope.addVariable(declaration);
         }
+    }
+    
+    public void setReturnType(){
+    	
     }
 
     public Type getReturnType() {

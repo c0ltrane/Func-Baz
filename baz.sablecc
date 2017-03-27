@@ -152,7 +152,7 @@ Productions
     {false} false |
     {par} l_par exp r_par |
     {call} id l_par args? r_par | 
-    {lambda} lambda l_par params? r_par block;
+    {lambda} lambda l_par params? return_type? r_par block;
 
   args =
     exp [additional_args]:additional_arg*;

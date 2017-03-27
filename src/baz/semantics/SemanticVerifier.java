@@ -16,6 +16,13 @@ public class SemanticVerifier
     private Scope currentScope;
 
     private FunctionInfo currentFunction;
+    
+	private String currentHighOrderFunctionName;
+
+    
+    //private ClosureInfo currentClosure;
+    
+    //private ClosureTable closureTable;
 
     private Type result;
 
@@ -118,9 +125,14 @@ public class SemanticVerifier
 
         // évalue l'expression
         Type type = eval(node.getExp());
-
-        this.currentScope.addVariable(
-                new Declaration(node.getId().getText(), type, node.getId()));
+        
+        if(type == CLOSURE){
+        	this.currentHighOrderFunctionName = node.getId().getText();
+        }
+        else{
+        	this.currentScope.addVariable(
+                    new Declaration(node.getId().getText(), type, node.getId()));	
+        }
     }
 
     @Override
@@ -166,8 +178,6 @@ public class SemanticVerifier
     public void caseAPrintInst(
             APrintInst node) {
 
-        // *** À COMPRENDRE ***
-
         if (node.getExp() != null) {
             // évalue l'expression
             Type type = eval(node.getExp());
@@ -182,35 +192,40 @@ public class SemanticVerifier
     public void caseAReturnInst(
             AReturnInst node) {
 
-        // *** À FAIRE ***
-    	if (node.getExp() == null) {
-            // évalue l'expression
-            if(this.currentFunction.getReturnType() != VOID){
-            	throw new SemanticException("function must return void", node.getReturn());
+        if (node.getExp() == null) {
+            if (this.currentFunction.getReturnType() != VOID) {
+                throw new SemanticException("must return a value",
+                        node.getReturn());
             }
-    	}
-    	else{
-    		Type type = eval(node.getExp());
-    	
-            if(this.currentFunction.getReturnType() != type){
-            	throw new SemanticException("bad return type", node.getReturn());
-            }
-     
         }
-    	
+        else {
+            // évalue l'expression
+            Type type = eval(node.getExp());
+
+            if (type != this.currentFunction.getReturnType()) {
+                throw new SemanticException("must return a value of "
+                        + this.currentFunction.getReturnType() + " type",
+                        node.getReturn());
+            }
+        }
     }
 
     @Override
     public void caseAAssignExp(
             AAssignExp node) {
 
-        // *** À FAIRE ***
-    	Type type = eval(node.getExp());
-    	Declaration declaration = this.currentScope.getVariable(node.getId());
-    	if(type!=declaration.getType()){
-    		throw new SemanticException("must assign a value of " + declaration.getType() + "type", node.getAssign());
-    	}
-    	this.result = type;
+        // évalue l'expression
+        Type type = eval(node.getExp());
+
+        Declaration declaration = this.currentScope.getVariable(node.getId());
+
+        if (type != declaration.getType()) {
+            throw new SemanticException(
+                    "must assign a value of " + declaration.getType() + " type",
+                    node.getAssign());
+        }
+
+        this.result = type;
     }
 
     @Override
@@ -407,23 +422,46 @@ public class SemanticVerifier
     public void caseAAddAdditive(
             AAddAdditive node) {
 
-        // *** À FAIRE ***
-        // Note: permettre la concaténation de string avec string, int et bool
-        // (en plus de l'addition entre entiers).
-    	Type left = eval(node.getLeft());
+        // évalue l'expression à gauche
+        Type left = eval(node.getLeft());
 
         // évalue l'expression à droite
         Type right = eval(node.getRight());
-        
-        /*
-        switch(left){
-        	case BOOL:
-        		
-        	case INT:
-        	case STRING:
-        		if(right != )
+
+        switch (left) {
+        case BOOL:
+            if (right == STRING) {
+                this.result = STRING;
+                return;
+            }
+            throw new SemanticException(
+                    "cannot add a bool value and a " + right + " value",
+                    node.getPlus());
+        case INT:
+            if (right == INT) {
+                this.result = INT;
+                return;
+            }
+            if (right == STRING) {
+                this.result = STRING;
+                return;
+            }
+            throw new SemanticException(
+                    "cannot add a int value and a " + right + " value",
+                    node.getPlus());
+        case STRING:
+            if (right == BOOL || right == INT || right == STRING) {
+                this.result = STRING;
+                return;
+            }
+            throw new SemanticException(
+                    "cannot add a string value and a " + right + " value",
+                    node.getPlus());
+        default:
+            throw new SemanticException(
+                    "cannot add a void value and a " + right + " value",
+                    node.getPlus());
         }
-        */
     }
 
     @Override
@@ -571,7 +609,11 @@ public class SemanticVerifier
     public void caseAVarTerm(
             AVarTerm node) {
 
-        // *** À FAIRE ***
+        // trouve la déclaration
+        Declaration declaration = this.currentScope.getVariable(node.getId());
+
+        // retourne le type de la variable
+        this.result = declaration.getType();
     }
 
     @Override
@@ -611,12 +653,18 @@ public class SemanticVerifier
 
         this.result = BOOL;
     }
+    
+    @Override
+    public void caseALambdaTerm(
+            ALambdaTerm node) {
+    	
+    	this.currentFunction.addClosure(new ClosureInfo(node,this.currentScope)); 
+        this.result = CLOSURE;
+    }
 
     @Override
     public void caseACallTerm(
             ACallTerm node) {
-
-        // *** À COMPRENDRE ***
 
         FunctionInfo functionInfo = this.functionTable
                 .getFunctionInfo(node.getId());
@@ -641,11 +689,19 @@ public class SemanticVerifier
             }
         }
 
-        // *** À COMPRENDRE: le corps de FunctionInfo.verifyArgs ***
-
         // vérifie les arguments
         functionInfo.verifyArgs(args, node.getLPar());
 
-        this.result = functionInfo.getReturnType();
+        Type type = functionInfo.getReturnType();
+        
+        if(type == CLOSURE){
+        	if(!functionInfo.hasClosure()){
+        		throw new SemanticException(
+                    "function " + node.getId().getText() + " sould return a closure", node.getId());
+        	}
+        	this.functionTable.addFunction(this.currentHighOrderFunctionName, functionInfo.getClosure());
+        }
+        	
+        this.result = type;
     }
 }

@@ -25,6 +25,8 @@ fun foo(n: int): int {
 #closure = timesTwo(5);
 #closure();
 
+
+
 #fun greet(name: string){	
 #}
 
@@ -41,6 +43,8 @@ fun foo(n: int): int {
     print;
   }
 
+  var t = foo(5);
+  print t;
   print "The result is: " + foo(n);
   print;
 }

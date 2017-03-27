@@ -12,10 +12,12 @@ import baz.syntax.node.*;
 public class FunctionInfo {
 
     private AFunc definition;
-
+    
     private LinkedHashSet<String> paramNames = new LinkedHashSet<>();
 
     private LinkedList<Declaration> params = new LinkedList<>();
+    
+    private ClosureInfo closureInfo;
 
     private Type returnType;
 
@@ -25,7 +27,32 @@ public class FunctionInfo {
         this.definition = node;
 
         // collectionne les paramètres
-        PParams params = node.getParams();
+        addParams(node.getParams());
+        if (node.getReturnType() != null) {
+
+            node.getReturnType().apply(new DepthFirstAdapter() {
+
+                @Override
+                public void caseAReturnType(
+                        AReturnType node) {
+
+                    FunctionInfo.this.returnType = Type.get(node.getType());
+                }
+            });
+        }
+        else {
+            this.returnType = VOID;
+        }
+        
+    }
+    
+    public FunctionInfo(ClosureInfo closureInfo){
+    	addParams(closureInfo.getClosureDefinition().getParams());
+    	
+    }
+    
+    public void addParams(PParams params){
+    	//PParams params = node.getParams();
         if (params != null) {
             params.apply(new DepthFirstAdapter() {
 
@@ -46,21 +73,11 @@ public class FunctionInfo {
             });
         }
 
-        if (node.getReturnType() != null) {
-
-            node.getReturnType().apply(new DepthFirstAdapter() {
-
-                @Override
-                public void caseAReturnType(
-                        AReturnType node) {
-
-                    FunctionInfo.this.returnType = Type.get(node.getType());
-                }
-            });
-        }
-        else {
-            this.returnType = VOID;
-        }
+        
+    }
+    
+    public void addClosure(ClosureInfo closureInfo){
+    	this.closureInfo = closureInfo;
     }
 
     public void setParams(
@@ -77,6 +94,10 @@ public class FunctionInfo {
     public Node getBlock() {
 
         return this.definition.getBlock();
+    }
+    
+    public ClosureInfo getClosure(){
+    	return this.closureInfo;
     }
 
     public String getName() {
@@ -100,6 +121,10 @@ public class FunctionInfo {
     public Type getReturnType() {
 
         return this.returnType;
+    }
+    
+    public boolean hasClosure(){
+    	return this.closureInfo != null;
     }
 
     public void verifyArgs(

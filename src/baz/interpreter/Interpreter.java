@@ -289,19 +289,19 @@ public class Interpreter
     public void caseAAddAdditive(
             AAddAdditive node) {
 
-        // *** À FAIRE ***
-    	Value left = eval(node.getLeft());
+        // évalue l'expression à gauche
+        Value left = eval(node.getLeft());
 
         // évalue l'expression à droite
         Value right = eval(node.getRight());
-        
-        if(left instanceof IntValue && right instanceof IntValue ){
-        	this.result = new IntValue(((IntValue) left).getValue() + ((IntValue) right).getValue());
+
+        if (left instanceof IntValue && right instanceof IntValue) {
+            this.result = new IntValue(((IntValue) left).getValue()
+                    + ((IntValue) right).getValue());
         }
-        else{
-        	this.result = new StringValue(left.toString() + right.toString());
+        else {
+            this.result = new StringValue(left.toString() + right.toString());
         }
-    	
     }
 
     @Override
@@ -437,7 +437,15 @@ public class Interpreter
 
         this.result = new BoolValue(false);
     }
+    
+    @Override
+    public void caseALambdaTerm(
+            ALambdaTerm node) {
 
+        //this.result = new ClosureInfo(node);
+    }
+
+    
     @Override
     public void caseACallTerm(
             ACallTerm node) {

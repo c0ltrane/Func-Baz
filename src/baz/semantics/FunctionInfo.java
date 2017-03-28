@@ -67,7 +67,7 @@ public class FunctionInfo {
     	
     }
     
-    public void addParams(PParams params){
+    private void addParams(PParams params){
     	//PParams params = node.getParams();
         if (params != null) {
             params.apply(new DepthFirstAdapter() {
@@ -88,7 +88,6 @@ public class FunctionInfo {
                 }
             });
         }
-
         
     }
     

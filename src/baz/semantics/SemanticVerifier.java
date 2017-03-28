@@ -67,11 +67,8 @@ public class SemanticVerifier
         visit(node.getFuncs());
 
         // faire l'interprétation abstraite du code
+        // (1) du bloc des fonctions
 
-        // (1) du programme principal
-        visit(node.getBlock());
-
-        // (2) du bloc des fonctions
         for (FunctionInfo functionInfo : this.functionTable.getFunctions()) {
             this.currentScope = new Scope(null);
             this.currentFunction = functionInfo;
@@ -79,6 +76,8 @@ public class SemanticVerifier
             visit(functionInfo.getBlock());
             this.currentScope = null;
         }
+        // (2) du programme principal
+        visit(node.getBlock());
 
     }
 
@@ -130,8 +129,9 @@ public class SemanticVerifier
         	this.currentHighOrderFunctionName = node.getId().getText();
         }
         else{
+        
         	this.currentScope.addVariable(
-                    new Declaration(node.getId().getText(), type, node.getId()));	
+        		new Declaration(node.getId().getText(), type, node.getId()));	
         }
     }
 
@@ -659,6 +659,7 @@ public class SemanticVerifier
             ALambdaTerm node) {
     	
     	this.currentFunction.addClosure(new ClosureInfo(node,this.currentScope)); 
+    	//System.out.println("closure added to function");
         this.result = CLOSURE;
     }
 
@@ -695,6 +696,8 @@ public class SemanticVerifier
         Type type = functionInfo.getReturnType();
         
         if(type == CLOSURE){
+        	//System.out.println("checking for closure in callterm");
+
         	if(!functionInfo.hasClosure()){
         		throw new SemanticException(
                     "function " + node.getId().getText() + " sould return a closure", node.getId());

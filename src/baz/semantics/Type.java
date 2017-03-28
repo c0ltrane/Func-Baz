@@ -65,7 +65,7 @@ public enum Type {
         case STRING:
             return "string";
         case CLOSURE:
-            return "void";
+            return "closure";
         case VOID:
             return "void";
         default:

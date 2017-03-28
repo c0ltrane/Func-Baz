@@ -10,22 +10,11 @@ fun foo(n: int): int {
   return x;
 }
 
-{
-  print "Hello world!";
-  print ;
 
-  var n = 3;
-  
-# exemple closure
-#fun timesTwo(param: int): closure{
-#	var i = 2;
-#	return fun(i: int, param: int): int {i*param};
-#} 
-
-#closure = timesTwo(5);
-#closure();
-
-
+fun timestwo(param: int): closure {
+    var i = 2;
+    return lambda(i: int, param: int): int { return i*param; };
+} 
 
 #fun greet(name: string){	
 #}
@@ -35,8 +24,19 @@ fun foo(n: int): int {
 #	return fun(){p = p + 1};
 #}
 
-#var addOne = add();
-#addOne();
+
+{
+  print "Hello world!";
+  print ;
+
+  var n = 3;
+  
+
+  var clos = timestwo(n);
+  clos();
+
+
+  print add(8);
 
   if n < 10 then {
     print "this is a small number!";

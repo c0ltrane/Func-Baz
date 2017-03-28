@@ -451,7 +451,7 @@ public class Interpreter
             ACallTerm node) {
 
         FunctionInfo functionInfo = this.functionTable
-                .getFunctionInfo(node.getId());
+                .getFunctionInfo(node.getId().getText());
 
         Frame oldFrame = this.currentFrame;
         Frame newFrame = new Frame(oldFrame, functionInfo);

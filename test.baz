@@ -11,9 +11,8 @@ fun foo(n: int): int {
 }
 
 
-fun timestwo(param: int): closure {
-    var i = 2;
-    return lambda(i: int, param: int): int { return i*param; };
+fun times(param: int): closure {
+    return lambda(i: int): int { return i*param; };
 } 
 
 #fun greet(name: string){	
@@ -32,17 +31,19 @@ fun timestwo(param: int): closure {
   var n = 3;
   
 
-  var clos = timestwo(n);
-  clos();
+  var timestwo = times(2);
+  timestwo(5); 
+  
 
-
-  print add(8);
+  #print add(8);
+  
 
   if n < 10 then {
     print "this is a small number!";
     print;
   }
 
+  
   var t = foo(5);
   print t;
   print "The result is: " + foo(n);

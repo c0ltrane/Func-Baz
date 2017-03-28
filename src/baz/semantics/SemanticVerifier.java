@@ -65,6 +65,7 @@ public class SemanticVerifier
 
         // trouve les déclarations de fonction
         visit(node.getFuncs());
+        
 
         // faire l'interprétation abstraite du code
         // (1) du bloc des fonctions
@@ -76,6 +77,7 @@ public class SemanticVerifier
             visit(functionInfo.getBlock());
             this.currentScope = null;
         }
+        
         // (2) du programme principal
         visit(node.getBlock());
 
@@ -127,6 +129,7 @@ public class SemanticVerifier
         
         if(type == CLOSURE){
         	this.currentHighOrderFunctionName = node.getId().getText();
+        	visit(node.getExp());
         }
         else{
         
@@ -667,8 +670,9 @@ public class SemanticVerifier
     public void caseACallTerm(
             ACallTerm node) {
 
+    	//System.out.println(node.getId().getText());
         FunctionInfo functionInfo = this.functionTable
-                .getFunctionInfo(node.getId());
+                .getFunctionInfo(node.getId().getText());
 
         if (functionInfo == null) {
             throw new SemanticException(
@@ -697,11 +701,11 @@ public class SemanticVerifier
         
         if(type == CLOSURE){
         	//System.out.println("checking for closure in callterm");
-
         	if(!functionInfo.hasClosure()){
         		throw new SemanticException(
                     "function " + node.getId().getText() + " sould return a closure", node.getId());
         	}
+        	//System.out.println("call term: " + this.currentHighOrderFunctionName);
         	this.functionTable.addFunction(this.currentHighOrderFunctionName, functionInfo.getClosure());
         }
         	

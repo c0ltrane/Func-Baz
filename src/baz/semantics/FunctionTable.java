@@ -38,9 +38,9 @@ public class FunctionTable {
     }
 
     public FunctionInfo getFunctionInfo(
-            TId id) {
+            String name) {
 
-        String name = id.getText();
+        //String name = id.getText();
         return this.functions.get(name);
     }
 }

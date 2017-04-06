@@ -12,6 +12,8 @@ public class Declaration {
     private Type type;
 
     private Token location;
+    
+    private ALambdaTerm lambdaDefinition;
 
     Declaration(
             String name,
@@ -26,6 +28,20 @@ public class Declaration {
         this.type = type;
         this.location = location;
     }
+    
+    Declaration(
+            String name,
+            Type type,
+            Token location, ALambdaTerm lambda) {
+
+       this(name,type,location);
+       this.lambdaDefinition = lambda;
+    }
+    
+    public ALambdaTerm getLambda(){
+    	return lambdaDefinition;
+    }
+    
 
     public String getName() {
 

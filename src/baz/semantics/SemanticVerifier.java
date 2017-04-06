@@ -7,6 +7,7 @@ import java.util.*;
 
 import baz.syntax.analysis.*;
 import baz.syntax.node.*;
+import baz.interpreter.*;
 
 public class SemanticVerifier
         extends DepthFirstAdapter {
@@ -17,8 +18,8 @@ public class SemanticVerifier
 
     private FunctionInfo currentFunction;
     
-	private String currentHighOrderFunctionName;
-
+    private ALambdaTerm currentLambdaExp;
+    
     
     //private ClosureInfo currentClosure;
     
@@ -127,15 +128,16 @@ public class SemanticVerifier
         // évalue l'expression
         Type type = eval(node.getExp());
         
-        if(type == CLOSURE){
-        	this.currentHighOrderFunctionName = node.getId().getText();
-        	visit(node.getExp());
+        if(type == ANON){
+        	 this.currentScope.addVariable(
+     	        	new Declaration(node.getId().getText(), type, node.getId(),currentLambdaExp));
         }
         else{
-        
-        	this.currentScope.addVariable(
-        		new Declaration(node.getId().getText(), type, node.getId()));	
+    	 this.currentScope.addVariable(
+    	        	new Declaration(node.getId().getText(), type, node.getId()));
+    	        
         }
+       
     }
 
     @Override
@@ -661,9 +663,10 @@ public class SemanticVerifier
     public void caseALambdaTerm(
             ALambdaTerm node) {
     	
-    	this.currentFunction.addClosure(new ClosureInfo(node,this.currentScope)); 
+    	//this.currentFunction.addClosure(new ClosureInfo(node,this.currentScope)); 
     	//System.out.println("closure added to function");
-        this.result = CLOSURE;
+    	this.currentLambdaExp = node;
+        this.result = ANON;
     }
 
     @Override
@@ -674,10 +677,18 @@ public class SemanticVerifier
         FunctionInfo functionInfo = this.functionTable
                 .getFunctionInfo(node.getId().getText());
 
-        if (functionInfo == null) {
+        boolean isLambdaExp = functionInfo == null && this.currentScope.variableExists(node.getId().getText());
+        
+        if (!isLambdaExp) {
             throw new SemanticException(
                     "unknown function " + node.getId().getText(), node.getId());
         }
+        else{
+        	Declaration lambda = this.currentScope.getVariable(node.getId());
+        	functionInfo = new FunctionInfo(lambda.getLambda());
+        }
+        
+        
 
         // évalue les arguments
         LinkedList<Type> args = new LinkedList<>();
@@ -693,12 +704,14 @@ public class SemanticVerifier
                 args.add(eval(aAdditionalArg.getExp()));
             }
         }
+        System.out.println(args);
 
         // vérifie les arguments
         functionInfo.verifyArgs(args, node.getLPar());
 
         Type type = functionInfo.getReturnType();
         
+        /**
         if(type == CLOSURE){
         	//System.out.println("checking for closure in callterm");
         	if(!functionInfo.hasClosure()){
@@ -708,6 +721,7 @@ public class SemanticVerifier
         	//System.out.println("call term: " + this.currentHighOrderFunctionName);
         	this.functionTable.addFunction(this.currentHighOrderFunctionName, functionInfo.getClosure());
         }
+        **/
         	
         this.result = type;
     }

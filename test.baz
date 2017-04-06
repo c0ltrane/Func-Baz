@@ -11,9 +11,9 @@ fun foo(n: int): int {
 }
 
 
-fun times(param: int): closure {
-    return lambda(i: int): int { return i*param; };
-} 
+#fun times(param: int): anon {
+#    return lambda(i: int): int { return i*param; };
+#} 
 
 #fun greet(name: string){	
 #}
@@ -24,6 +24,8 @@ fun times(param: int): closure {
 #}
 
 
+
+
 {
   print "Hello world!";
   print ;
@@ -31,8 +33,13 @@ fun times(param: int): closure {
   var n = 3;
   
 
-  var timestwo = times(2);
-  timestwo(5); 
+ # var timestwo = times(2);
+  #timestwo(5); 
+  
+  var f = lambda(x:int):int {return x+1;};
+  
+  print f(0);
+  print;
   
 
   #print add(8);
@@ -44,8 +51,7 @@ fun times(param: int): closure {
   }
 
   
-  var t = foo(5);
-  print t;
-  print "The result is: " + foo(n);
+  #foo(5);
+  #print "The result is: " + foo(n);
   print;
 }

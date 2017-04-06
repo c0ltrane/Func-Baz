@@ -8,7 +8,7 @@ public enum Type {
     BOOL,
     INT,
     STRING,
-    CLOSURE,
+    ANON,
     VOID;
 
     public static Type get(
@@ -44,10 +44,10 @@ public enum Type {
             }
             
             @Override
-            public void caseAClosureType(
-                    AClosureType node) {
+            public void caseAAnonType(
+                    AAnonType node) {
 
-                result.type = CLOSURE;
+                result.type = ANON;
             }
         });
 
@@ -64,8 +64,8 @@ public enum Type {
             return "int";
         case STRING:
             return "string";
-        case CLOSURE:
-            return "closure";
+        case ANON:
+            return "anon";
         case VOID:
             return "void";
         default:

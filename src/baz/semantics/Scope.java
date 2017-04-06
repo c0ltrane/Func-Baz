@@ -4,12 +4,14 @@ package baz.semantics;
 import java.util.*;
 
 import baz.syntax.node.*;
+import baz.interpreter.*;
 
 public class Scope {
 
     private Scope parent;
 
     private LinkedHashMap<String, Declaration> variables = new LinkedHashMap<>();
+   // private LinkedHashMap<String , LambdaValue> anonymousFunctions = new LinkedHashMap<>();
 
     public Scope(
             Scope parent) {
@@ -34,8 +36,9 @@ public class Scope {
 
         this.variables.put(name, declaration);
     }
+    
 
-    private boolean variableExists(
+    public boolean variableExists(
             String name) {
 
         if (this.variables.containsKey(name)) {

@@ -11,20 +11,27 @@ import baz.syntax.node.*;
 
 public class FunctionInfo {
 
-    private AFunc definition;
+    //private AFunc definition;
+    
+    //private ALambdaTerm lambdaDef;
+	
+	private Node definition;
+	
+	private String name;
     
     private LinkedHashSet<String> paramNames = new LinkedHashSet<>();
 
     private LinkedList<Declaration> params = new LinkedList<>();
     
-    private ClosureInfo closureInfo;
+   // private ClosureInfo closureInfo;
 
     private Type returnType;
 
     public FunctionInfo(
             AFunc node) {
 
-        this.definition = node;
+        this.definition = node.getBlock();
+        this.name = node.getName().getText();
 
         // collectionne les paramètres
         addParams(node.getParams());
@@ -46,9 +53,9 @@ public class FunctionInfo {
         
     }
     
-    public FunctionInfo(ClosureInfo closureInfo){
-    	addParams(closureInfo.getClosureDefinition().getParams());
-    	ALambdaTerm node = closureInfo.getClosureDefinition();
+    public FunctionInfo(ALambdaTerm node){
+    	this.definition = node.getBlock();
+    	addParams(node.getParams());
     	if (node.getReturnType() != null) {
 
             node.getReturnType().apply(new DepthFirstAdapter() {
@@ -91,9 +98,6 @@ public class FunctionInfo {
         
     }
     
-    public void addClosure(ClosureInfo closureInfo){
-    	this.closureInfo = closureInfo;
-    }
 
     public void setParams(
             LinkedList<Value> args,
@@ -108,16 +112,12 @@ public class FunctionInfo {
 
     public Node getBlock() {
 
-        return this.definition.getBlock();
-    }
-    
-    public ClosureInfo getClosure(){
-    	return this.closureInfo;
+        return this.definition;
     }
 
     public String getName() {
 
-        return this.definition.getName().getText();
+        return this.name;
     }
 
     public int paramCount() {
@@ -142,9 +142,6 @@ public class FunctionInfo {
         return this.returnType;
     }
     
-    public boolean hasClosure(){
-    	return this.closureInfo != null;
-    }
 
     public void verifyArgs(
             LinkedList<Type> args,

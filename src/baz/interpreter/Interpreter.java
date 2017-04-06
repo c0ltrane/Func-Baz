@@ -442,7 +442,7 @@ public class Interpreter
     public void caseALambdaTerm(
             ALambdaTerm node) {
 
-        //this.result = new ClosureInfo(node);
+    	this.result = new LambdaValue(node);
     }
 
     
@@ -452,9 +452,17 @@ public class Interpreter
 
         FunctionInfo functionInfo = this.functionTable
                 .getFunctionInfo(node.getId().getText());
+        
+        boolean isLambdaExp = functionInfo == null;
 
+        if(isLambdaExp){
+        	Value lambdaExp = this.currentFrame.getVariable(node.getId());
+        	functionInfo = new FunctionInfo(((LambdaValue)lambdaExp).getValue());
+        }
+        
         Frame oldFrame = this.currentFrame;
         Frame newFrame = new Frame(oldFrame, functionInfo);
+
 
         // mémorise la l'emplacement
         oldFrame.setCallLocation(node.getId());
@@ -473,7 +481,7 @@ public class Interpreter
                 args.add(eval(aAdditionalArg.getExp()));
             }
         }
-
+      
         // initialise les paramètres formels
         functionInfo.setParams(args, newFrame);
 
@@ -486,7 +494,7 @@ public class Interpreter
         }
         catch (ReturnException e) {
         }
-
+        
         // remet l'ancien Frame
         this.currentFrame = oldFrame;
 

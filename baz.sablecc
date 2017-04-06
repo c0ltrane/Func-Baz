@@ -36,7 +36,6 @@ Tokens
   do = 'do';
   else = 'else';
   fun = 'fun';
-  lambda = 'lambda';
   if = 'if';
   print = 'print';
   return = 'return';
@@ -45,7 +44,8 @@ Tokens
   bool = 'bool';
   int = 'int';
   string = 'string';
-  closure = 'closure';
+  lambda = 'lambda';
+  anon = 'anon';
   true = 'true';
   false = 'false';
   var = 'var';
@@ -86,7 +86,7 @@ Productions
     {bool} bool |
     {int} int |
     {string} string |
-    {closure} closure;
+    {anon} anon;
 
   block =
     l_brace [insts]:inst* r_brace;

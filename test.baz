@@ -1,37 +1,29 @@
-# Premier programme Baz!!!
-
-fun foo(n: int): int {
-  var x = 0;
-
-  while n < 100 do {
-    x = x + n;
-    n = n + 1;
-  }
-  return x;
-}
+#Programme FunkBaz
 
 
 #fun times(param: int): anon(int)->int {
  #   return lambda(i: int): int { return i*param; };
 #} 
 
-#fun greet(name: string){	
-#}
-
-#fun add(): closure{
-#	var p = 0;
-#	return fun(){p = p + 1};
-#}
+fun greet(name: string): string{
+  return "Hello " + name;
+}
 
 fun bar(f: anon(int,int)->int, o: int) : int{
   return f(o,o);
 }
 
+# composition de fonctions
+fun bazzuka(f:anon(int)->int,g:anon(int)->int, a:int) :int{
+  return f(g(a));
+}
+
 
 
 {
-  print "Hello world!";
-  print ;
+
+  print greet("programmer");
+  print;
 
   var n = 3;
   
@@ -44,22 +36,12 @@ fun bar(f: anon(int,int)->int, o: int) : int{
   print bar(f,n);
   print;
   
-  print f(2,2);
+  print f(n,n);
   print;
   
+  var e = lambda(x:int):int{return x*x;};
   
-  
-
-  #print add(8);
-  
-
-  if n < 10 then {
-    print "this is a small number!";
-    print;
-  }
-
-  
-  print foo(5);
-  #print "The result is: " + foo(n);
+  print bazzuka(e,e,2);
   print;
+    
 }

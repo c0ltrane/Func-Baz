@@ -11,15 +11,15 @@ import baz.syntax.node.*;
 
 public class ClosureInfo {
 	
-	private Scope freeVariables;
-	private ALambdaTerm definition;
+	private Frame freeVariables;
+	private LambdaValue lambdaExp;
 	
-	public ClosureInfo(ALambdaTerm node, Scope scope){
-        this.definition = node;
-        this.freeVariables = scope;
+	public ClosureInfo(LambdaValue node, Frame freeVariables){
+        this.lambdaExp = node;
+        this.freeVariables = freeVariables;
 	}
 	
-	public ALambdaTerm getClosureDefinition(){
-		return this.definition;
+	public LambdaValue getLambdaExp(){
+		return this.lambdaExp;
 	}
 }

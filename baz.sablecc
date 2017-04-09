@@ -32,6 +32,7 @@ Tokens
   percent = '%';
   comma = ',';
   colon = ':';
+  arrow = '->';
 
   do = 'do';
   else = 'else';
@@ -86,7 +87,20 @@ Productions
     {bool} bool |
     {int} int |
     {string} string |
-    {anon} anon;
+    {anon} anon l_par params_anon? r_par return_type_anon?;
+    
+  params_anon =
+    param_anon [additional_params_anon]:additional_param_anon*;
+
+  additional_param_anon =
+    comma param_anon;
+
+  param_anon =
+    type;
+
+  return_type_anon =
+    arrow type;
+
 
   block =
     l_brace [insts]:inst* r_brace;

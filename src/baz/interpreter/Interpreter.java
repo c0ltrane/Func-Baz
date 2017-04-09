@@ -457,6 +457,7 @@ public class Interpreter
 
         if(isLambdaExp){
         	Value lambdaExp = this.currentFrame.getVariable(node.getId());
+        	
         	functionInfo = new FunctionInfo(((LambdaValue)lambdaExp).getValue());
         }
         

@@ -11,8 +11,8 @@ fun foo(n: int): int {
 }
 
 
-#fun times(param: int): anon {
-#    return lambda(i: int): int { return i*param; };
+#fun times(param: int): anon(int)->int {
+ #   return lambda(i: int): int { return i*param; };
 #} 
 
 #fun greet(name: string){	
@@ -23,6 +23,9 @@ fun foo(n: int): int {
 #	return fun(){p = p + 1};
 #}
 
+fun bar(f: anon(int,int)->int, o: int) : int{
+  return f(o,o);
+}
 
 
 
@@ -33,13 +36,18 @@ fun foo(n: int): int {
   var n = 3;
   
 
- # var timestwo = times(2);
-  #timestwo(5); 
+  #var timestwo = times(2);
+  #print timestwo(5); 
   
-  var f = lambda(x:int):int {return x+1;};
+  var f = lambda(x:int,y:int):int {return x*y;};
   
-  print f(0);
+  print bar(f,n);
   print;
+  
+  print f(2,2);
+  print;
+  
+  
   
 
   #print add(8);
@@ -51,7 +59,7 @@ fun foo(n: int): int {
   }
 
   
-  #foo(5);
+  print foo(5);
   #print "The result is: " + foo(n);
   print;
 }

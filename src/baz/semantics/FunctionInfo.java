@@ -12,9 +12,7 @@ import baz.syntax.node.*;
 public class FunctionInfo {
 
     //private AFunc definition;
-    
-    //private ALambdaTerm lambdaDef;
-	
+    	
 	private Node definition;
 	
 	private String name;
@@ -23,8 +21,6 @@ public class FunctionInfo {
 
     private LinkedList<Declaration> params = new LinkedList<>();
     
-   // private ClosureInfo closureInfo;
-
     private Type returnType;
 
     public FunctionInfo(
@@ -74,6 +70,17 @@ public class FunctionInfo {
     	
     }
     
+    public FunctionInfo(Declaration anonFunction){
+    	//this.definition = node.getBlock();
+    	this.returnType = anonFunction.getAnonReturnType();
+    	//System.out.println(this.returnType);
+    	LinkedList<Type> anonParams = anonFunction.getAnonParameters();
+    	for(int i = 0; i < anonParams.size(); i++){
+    		//System.out.println(anonParams.get(i));
+    		this.params.add(new Declaration(Integer.toString(i),anonParams.get(i),null));
+    	}
+    }
+    
     private void addParams(PParams params){
     	//PParams params = node.getParams();
         if (params != null) {
@@ -89,9 +96,10 @@ public class FunctionInfo {
                                 node.getId());
                     }
                     FunctionInfo.this.paramNames.add(name);
+
                     FunctionInfo.this.params
                             .add(new Declaration(node.getId().getText(),
-                                    Type.get(node.getType()), node.getId()));
+                                    Type.get(node.getType()), node.getId(), node.getType()));
                 }
             });
         }

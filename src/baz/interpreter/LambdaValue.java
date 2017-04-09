@@ -25,4 +25,5 @@ public class LambdaValue
 
         return ((ALambdaTerm) obj) == this.definition;
     }
+    
 }

@@ -6,7 +6,7 @@ Helpers
   not_eol = [[0..0xffff] - [10 + 13]];
 
   digit = ['0'..'9'];
-  letter = ['a'..'z'];
+  letter = ['a'..'z'] | ['A'..'Z'];
 
 Tokens
 
@@ -45,7 +45,6 @@ Tokens
   bool = 'bool';
   int = 'int';
   string = 'string';
-  lambda = 'lambda';
   anon = 'anon';
   true = 'true';
   false = 'false';
@@ -87,7 +86,7 @@ Productions
     {bool} bool |
     {int} int |
     {string} string |
-    {anon} anon l_par params_anon? r_par return_type_anon?;
+    {anon} l_par params_anon? r_par return_type_anon?;
     
   params_anon =
     param_anon [additional_params_anon]:additional_param_anon*;
@@ -166,7 +165,7 @@ Productions
     {false} false |
     {par} l_par exp r_par |
     {call} id l_par args? r_par | 
-    {lambda} lambda l_par params? r_par return_type? block;
+    {lambda} anon l_par params? r_par return_type? block;
 
   args =
     exp [additional_args]:additional_arg*;

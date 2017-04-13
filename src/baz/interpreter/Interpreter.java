@@ -442,13 +442,20 @@ public class Interpreter
     public void caseALambdaTerm(
             ALambdaTerm node) {
 
-    	this.result = new LambdaValue(node);
+    	LambdaValue lambda = new LambdaValue(node);
+    	lambda.setEnvironment(this.currentFrame);
+    	this.result = lambda;
+    	
     }
 
     
     @Override
     public void caseACallTerm(
             ACallTerm node) {
+
+    	 Frame oldFrame = this.currentFrame;
+         
+         Frame newFrame;
 
         FunctionInfo functionInfo = this.functionTable
                 .getFunctionInfo(node.getId().getText());
@@ -458,12 +465,14 @@ public class Interpreter
         if(isLambdaExp){
         	Value lambdaExp = this.currentFrame.getVariable(node.getId());
         	
-        	functionInfo = new FunctionInfo(((LambdaValue)lambdaExp).getValue());
-        }
-        
-        Frame oldFrame = this.currentFrame;
-        Frame newFrame = new Frame(oldFrame, functionInfo);
+        	functionInfo = new FunctionInfo((LambdaValue)lambdaExp);
+        	newFrame = ((LambdaValue)lambdaExp).getEnvironment();
 
+        }
+        else{
+        	newFrame = new Frame(oldFrame, functionInfo);
+        }
+       
 
         // mémorise la l'emplacement
         oldFrame.setCallLocation(node.getId());

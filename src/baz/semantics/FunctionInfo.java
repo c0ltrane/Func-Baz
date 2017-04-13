@@ -49,6 +49,29 @@ public class FunctionInfo {
         
     }
     
+    public FunctionInfo(LambdaValue lambda){
+    	ALambdaTerm node = lambda.getValue();
+    	this.definition = node.getBlock();
+    	addParams(node.getParams());
+    	if (node.getReturnType() != null) {
+
+            node.getReturnType().apply(new DepthFirstAdapter() {
+
+                @Override
+                public void caseAReturnType(
+                        AReturnType node) {
+
+                    FunctionInfo.this.returnType = Type.get(node.getType());
+                }
+            });
+        }
+        else {
+            this.returnType = VOID;
+        }
+    	
+    }
+    
+    // constructor for lambda  function variable
     public FunctionInfo(ALambdaTerm node){
     	this.definition = node.getBlock();
     	addParams(node.getParams());
@@ -70,19 +93,16 @@ public class FunctionInfo {
     	
     }
     
+    // constructor for function call of anonymous function passed as parameter inside another function
     public FunctionInfo(Declaration anonFunction){
-    	//this.definition = node.getBlock();
     	this.returnType = anonFunction.getAnonReturnType();
-    	//System.out.println(this.returnType);
     	LinkedList<Type> anonParams = anonFunction.getAnonParameters();
     	for(int i = 0; i < anonParams.size(); i++){
-    		//System.out.println(anonParams.get(i));
     		this.params.add(new Declaration(Integer.toString(i),anonParams.get(i),null));
     	}
     }
     
     private void addParams(PParams params){
-    	//PParams params = node.getParams();
         if (params != null) {
             params.apply(new DepthFirstAdapter() {
 

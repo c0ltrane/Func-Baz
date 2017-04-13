@@ -679,15 +679,15 @@ public class SemanticVerifier
         if(isLambdaCall){
         	Declaration lambda = this.currentScope.getVariable(node.getId());
 
+        	// call in another function
         	if(this.currentFunction != null){
         		functionInfo = new FunctionInfo(lambda);
         	}
+        	//call in main block
         	else{
         		functionInfo = new FunctionInfo(lambda.getLambda());
         	}
         }
-        
-        
 
         // évalue les arguments
         LinkedList<Type> args = new LinkedList<>();

@@ -1,46 +1,86 @@
 #Programme FunkBaz
 
 
-#fun times(param: int): anon(int)->int {
- #   return lambda(i: int): int { return i*param; };
-#} 
+fun times(param: int):(int)->int {
+    return anon(i: int): int { return i*param; };
+} 
+
+fun getAnonymous():(int)->int{
+  return anon(o:int): int{return o*o;};
+}
+
+fun getThree():(int)->int{
+  var a = 5;
+  return anon(a:int):int{return 3;};
+}
 
 fun greet(name: string): string{
   return "Hello " + name;
 }
 
-fun bar(f: anon(int,int)->int, o: int) : int{
+fun bar(f:(int,int)->int, o: int) : int{
   return f(o,o);
 }
 
 # composition de fonctions
-fun bazzuka(f:anon(int)->int,g:anon(int)->int, a:int) :int{
+fun bazzuka(f:(int)->int,g:(int)->int, a:int) :int{
   return f(g(a));
 }
+
+#fun counter() : ()->int{
+ #  var counter = 0;
+  # return anon():int{ return counter = counter + 1;};
+#}
 
 
 
 {
 
-  print greet("programmer");
+  #print greet("programmer");
   print;
 
   var n = 3;
   
-
-  #var timestwo = times(2);
-  #print timestwo(5); 
+  print "test timestwo";
+  print;
+  var timestwo = times(2);
+  print timestwo(5); print;
+  print timestwo(7); print;
   
-  var f = lambda(x:int,y:int):int {return x*y;};
+  print "test getThree"; print;
+  var hereIsThree = getThree();
+  print hereIsThree(8); print;
   
+  print "test counter"; print;
+  #var plusOne = counter();
+  #print plusOne(); print;
+  #print plusOne(); print;
+  
+  print "test getAnonymous";
+  print;
+  var anonymous = getAnonymous();
+  print anonymous(8);
+  print;
+  
+  var f = anon(x:int,y:int):int {return x*y;};
+  
+  print "test 1 bar"; print;
   print bar(f,n);
   print;
   
+  print "test 2 bar"; print;
+  print bar(anon(x:int,y:int):int {return x*y+1;},n);
+  print;
+  
+  print "test f"; print;
   print f(n,n);
   print;
   
-  var e = lambda(x:int):int{return x*x;};
+  var y = 1;
   
+  var e = anon(x:int):int{return y*x*x;};
+  
+  print "test bazzuka"; print;
   print bazzuka(e,e,2);
   print;
     

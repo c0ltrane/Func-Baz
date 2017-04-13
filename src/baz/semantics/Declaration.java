@@ -15,9 +15,9 @@ public class Declaration {
 
     private Token location;
     
-    private LinkedList<Type> anonParameters = new LinkedList<>();
+    private LinkedList<Type> lambdaParameters = new LinkedList<>();
     
-    private Type anonReturnType;
+    private Type lambdaReturnType;
     
     private ALambdaTerm lambdaDefinition;
 
@@ -65,7 +65,7 @@ public class Declaration {
                     public void caseAReturnTypeAnon(
                             AReturnTypeAnon node) {
 
-                        Declaration.this.anonReturnType = Type.get(node.getType());
+                        Declaration.this.lambdaReturnType = Type.get(node.getType());
                     }
                 });
             }
@@ -81,7 +81,7 @@ public class Declaration {
                 @Override
                 public void caseAParamAnon(
                         AParamAnon node) {
-                    Declaration.this.anonParameters.add(Type.get(node.getType()));
+                    Declaration.this.lambdaParameters.add(Type.get(node.getType()));
                     
                 }
             });
@@ -95,11 +95,11 @@ public class Declaration {
     }
     
     public LinkedList<Type> getAnonParameters(){
-    	return anonParameters;
+    	return lambdaParameters;
     }
     
     public Type getAnonReturnType(){
-    	return anonReturnType;
+    	return lambdaReturnType;
     }
     
 

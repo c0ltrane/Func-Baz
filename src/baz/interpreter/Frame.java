@@ -38,14 +38,40 @@ public class Frame {
 
         // vérifie si la variable existe
         String name = id.getText();
+        
+        if (variableExists(name)) {
+            return this.variables.get(name);
+
+        }
+        if(parent.variableExists(name)){
+            return this.parent.getVariables().get(name);
+        }
+        else{
+        	throw new InterpreterException("undefined variable '" + name + "'",
+                    id, this);
+        }
+        /*
         if (!this.variables.containsKey(name)) {
             throw new InterpreterException("undefined variable '" + name + "'",
                     id, this);
         }
-
-        return this.variables.get(name);
+*/
     }
+    
+    public boolean variableExists(
+            String name) {
 
+        if (this.variables.containsKey(name)) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    public HashMap<String,Value> getVariables(){
+    	return variables;
+    }
+    
     public void setReturnValue(
             Value value) {
 

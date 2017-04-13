@@ -11,7 +11,6 @@ public class Scope {
     private Scope parent;
 
     private LinkedHashMap<String, Declaration> variables = new LinkedHashMap<>();
-   // private LinkedHashMap<String , LambdaValue> anonymousFunctions = new LinkedHashMap<>();
 
     public Scope(
             Scope parent) {
@@ -66,5 +65,9 @@ public class Scope {
         }
 
         return this.variables.get(name);
+    }
+    
+    public LinkedHashMap<String, Declaration> getVariables(){
+    	return variables;
     }
 }

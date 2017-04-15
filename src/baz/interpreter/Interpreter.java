@@ -442,8 +442,7 @@ public class Interpreter
     public void caseALambdaTerm(
             ALambdaTerm node) {
 
-    	LambdaValue lambda = new LambdaValue(node);
-    	lambda.setEnvironment(this.currentFrame);
+    	LambdaValue lambda = new LambdaValue(node, this.currentFrame);
     	this.result = lambda;
     	
     }
@@ -453,9 +452,9 @@ public class Interpreter
     public void caseACallTerm(
             ACallTerm node) {
 
-    	 Frame oldFrame = this.currentFrame;
+    	Frame oldFrame = this.currentFrame;
          
-         Frame newFrame;
+        Frame newFrame;
 
         FunctionInfo functionInfo = this.functionTable
                 .getFunctionInfo(node.getId().getText());

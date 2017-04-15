@@ -21,17 +21,7 @@ public class FunctionTable {
 
         this.functions.put(name, new FunctionInfo(node));
     }
-    /*
-    public void addFunction(String name,ClosureInfo node){
-         if (this.functions.containsKey(name)) {
-             throw new SemanticException(
-                     "function '" + name + "' is already defined",
-                     node.getClosureDefinition().getLambda());
-         }
-
-         this.functions.put(name, new FunctionInfo(node));
-    }
-*/
+   
     public Collection<FunctionInfo> getFunctions() {
 
         return this.functions.values();

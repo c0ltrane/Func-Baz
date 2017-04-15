@@ -9,25 +9,21 @@ import baz.interpreter.*;
 import baz.syntax.analysis.*;
 import baz.syntax.node.*;
 
-public class FunctionInfo {
+public class LambdaInfo {
+
     	
 	private Node definition;
-	
-	private String name;
-    
+	    
     private LinkedHashSet<String> paramNames = new LinkedHashSet<>();
 
     private LinkedList<Declaration> params = new LinkedList<>();
     
     private Type returnType;
-    
-    private LambdaInfo returnedLambda;
 
-    public FunctionInfo(
-            AFunc node) {
+    public LambdaInfo(
+            ALambdaTerm node) {
 
         this.definition = node.getBlock();
-        this.name = node.getName().getText();
 
         // collectionne les paramètres
         addParams(node.getParams());
@@ -39,7 +35,7 @@ public class FunctionInfo {
                 public void caseAReturnType(
                         AReturnType node) {
 
-                    FunctionInfo.this.returnType = Type.get(node.getType());
+                	LambdaInfo.this.returnType = Type.get(node.getType());
                 }
             });
         }
@@ -49,28 +45,26 @@ public class FunctionInfo {
         
     }
     
-    public FunctionInfo(LambdaValue lambda){
-    	ALambdaTerm node = lambda.getLambda();
-    	this.definition = node.getBlock();
-    	addParams(node.getParams());
-    	if (node.getReturnType() != null) {
+    // constructor for lambda expression function parameter definition
+    public LambdaInfo(
+            PType paramType) {
+    	addLambdaParams(((AAnonType)paramType).getParamsAnon());
+      	if (((AAnonType)paramType).getReturnTypeAnon() != null) {
 
-            node.getReturnType().apply(new DepthFirstAdapter() {
+      		((AAnonType)paramType).getReturnTypeAnon().apply(new DepthFirstAdapter() {
 
                 @Override
-                public void caseAReturnType(
-                        AReturnType node) {
+                public void caseAReturnTypeAnon(
+                        AReturnTypeAnon node) {
 
-                    FunctionInfo.this.returnType = Type.get(node.getType());
+                    LambdaInfo.this.returnType = Type.get(node.getType());
                 }
-            });
-        }
-        else {
-            this.returnType = VOID;
-        }
-    	
+      		});
+    
+      	}
     }
     
+   
     private void addParams(PParams params){
         if (params != null) {
             params.apply(new DepthFirstAdapter() {
@@ -80,25 +74,36 @@ public class FunctionInfo {
                         AParam node) {
 
                     String name = node.getId().getText();
-                    if (FunctionInfo.this.paramNames.contains(name)) {
+                    if (LambdaInfo.this.paramNames.contains(name)) {
                         throw new SemanticException("redefinition of " + name,
                                 node.getId());
                     }
-                    FunctionInfo.this.paramNames.add(name);
-                    
-                    if(Type.get(node.getType()) == ANON){
-                    	FunctionInfo.this.params
-                        .add(new Declaration(node.getId().getText(),
-                                Type.get(node.getType()), node.getId(),node.getType()));
-                    }
-                    else{
-                    	FunctionInfo.this.params
-                        .add(new Declaration(node.getId().getText(),
-                                Type.get(node.getType()), node.getId()));	
-                    }
+                    LambdaInfo.this.paramNames.add(name);
+
+                    LambdaInfo.this.params
+                            .add(new Declaration(node.getId().getText(),
+                                    Type.get(node.getType()), node.getId()));
                 }
             });
         }
+        
+    }
+    
+    private void addLambdaParams(PParamsAnon params){
+    	//PParams params = node.getParams();
+        if (params != null) {
+            params.apply(new DepthFirstAdapter() {
+
+                @Override
+                public void caseAParamAnon(
+                        AParamAnon node) {
+                    LambdaInfo.this.params.add(new Declaration(null,
+                            Type.get(node.getType()), null));
+                    
+                }
+            });
+        }
+        
     }
     
 
@@ -116,11 +121,6 @@ public class FunctionInfo {
     public Node getBlock() {
 
         return this.definition;
-    }
-
-    public String getName() {
-
-        return this.name;
     }
 
     public int paramCount() {
@@ -143,14 +143,6 @@ public class FunctionInfo {
     public Type getReturnType() {
 
         return this.returnType;
-    }
-    
-    public void setReturnedLambda(LambdaInfo lambdaInfo){
-    	this.returnedLambda = lambdaInfo;
-    }
-    
-    public LambdaInfo getReturnedLambda(){
-    	return this.returnedLambda;
     }
     
 

@@ -13,12 +13,12 @@ public class SemanticVerifier
         extends DepthFirstAdapter {
 
     private FunctionTable functionTable;
-
+    
     private Scope currentScope;
 
     private FunctionInfo currentFunction;
     
-    private ALambdaTerm currentLambdaExp;
+    private LambdaInfo currentLambdaInfo;
 
     private Type result;
 
@@ -58,11 +58,10 @@ public class SemanticVerifier
     @Override
     public void caseAProgram(
             AProgram node) {
-
+    	
         // trouve les déclarations de fonction
         visit(node.getFuncs());
         
-
         // faire l'interprétation abstraite du code
         // (1) du bloc des fonctions
 
@@ -124,15 +123,16 @@ public class SemanticVerifier
         Type type = eval(node.getExp());
         
         if(type == ANON){
-        	 this.currentScope.addVariable(
-     	        	new Declaration(node.getId().getText(), type, node.getId(),currentLambdaExp));
+        	//this.lambdaTable.addLambda(currentLambdaInfo, node.getId().getText());
+        	this.currentScope.addVariable(new Declaration(node.getId().getText(), type, node.getId(),this.currentLambdaInfo));
+            this.currentLambdaInfo = null;
+
         }
         else{
-    	 this.currentScope.addVariable(
+        	this.currentScope.addVariable(
     	        	new Declaration(node.getId().getText(), type, node.getId()));
-    	        
+
         }
-       
     }
 
     @Override
@@ -206,6 +206,9 @@ public class SemanticVerifier
                 throw new SemanticException("must return a value of "
                         + this.currentFunction.getReturnType() + " type",
                         node.getReturn());
+            }
+            if(type == ANON){
+            	this.currentFunction.setReturnedLambda(this.currentLambdaInfo);
             }
         }
     }
@@ -658,38 +661,31 @@ public class SemanticVerifier
     public void caseALambdaTerm(
             ALambdaTerm node) {
     	
-    	this.currentLambdaExp = node;
         this.result = ANON;
+        this.currentLambdaInfo = new LambdaInfo(node);
     }
 
     @Override
     public void caseACallTerm(
             ACallTerm node) {
+    	Type type;        
+    	Declaration lambda = null;
     	
-        boolean isLambdaCall = this.currentScope.variableExists(node.getId().getText());
-
+        
         FunctionInfo functionInfo = this.functionTable
                 .getFunctionInfo(node.getId().getText());
-
         
-        if (functionInfo == null && !isLambdaCall) {
+        if(functionInfo == null){
+        	lambda = this.currentScope.getVariable(node.getId());
+        }
+        
+        if (functionInfo == null && lambda == null) {
             throw new SemanticException(
                     "unknown function " + node.getId().getText(), node.getId());
         }
-        if(isLambdaCall){
-        	Declaration lambda = this.currentScope.getVariable(node.getId());
 
-        	// call in another function
-        	if(this.currentFunction != null){
-        		functionInfo = new FunctionInfo(lambda);
-        	}
-        	//call in main block
-        	else{
-        		functionInfo = new FunctionInfo(lambda.getLambda());
-        	}
-        }
-
-        // évalue les arguments
+        
+     // évalue les arguments
         LinkedList<Type> args = new LinkedList<>();
         if (node.getArgs() != null) {
             // premier argument
@@ -703,13 +699,27 @@ public class SemanticVerifier
                 args.add(eval(aAdditionalArg.getExp()));
             }
         }
+        
 
         // vérifie les arguments
-        functionInfo.verifyArgs(args, node.getLPar());
-
-        Type type = functionInfo.getReturnType();
         
-        	
+        if(lambda != null){
+        	//System.out.println(lambda.getName());
+        	LambdaInfo lambdaInfo = lambda.getLambda();
+        	lambdaInfo.verifyArgs(args, node.getLPar());
+        	type = lambdaInfo.getReturnType();
+        }
+        
+        else{
+        	functionInfo.verifyArgs(args, node.getLPar());
+
+            type = functionInfo.getReturnType();
+        }
+
+        if(type == ANON){
+        	this.currentLambdaInfo = functionInfo.getReturnedLambda();
+        }
         this.result = type;
+        
     }
 }

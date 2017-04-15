@@ -66,7 +66,7 @@ public class Scope {
 
         return this.variables.get(name);
     }
-    
+   
     public LinkedHashMap<String, Declaration> getVariables(){
     	return variables;
     }

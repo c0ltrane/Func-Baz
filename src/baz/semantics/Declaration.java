@@ -14,13 +14,9 @@ public class Declaration {
     private Type type;
 
     private Token location;
+        
+    private LambdaInfo lambdaInfo;
     
-    private LinkedList<Type> lambdaParameters = new LinkedList<>();
-    
-    private Type lambdaReturnType;
-    
-    private ALambdaTerm lambdaDefinition;
-
     Declaration(
             String name,
             Type type,
@@ -31,77 +27,35 @@ public class Declaration {
                     location);
         }
         
-        
         this.name = name;
         this.type = type;
         this.location = location;
     }
     
-    // constructor for lambda variable
+    // constructor for lambda expression
     Declaration(
             String name,
             Type type,
-            Token location, ALambdaTerm lambda) {
-
-       this(name,type,location);
-       this.lambdaDefinition = lambda;
+            Token location,
+            LambdaInfo lambdaInfo) {
+    	this(name,type,location);
+    	this.lambdaInfo = lambdaInfo;
     }
     
-    // constructor for anonymous function passed as function parameter
+    
+    // constructor for lambda expression passed as function parameter
     Declaration(
             String name,
             Type type,
             Token location, PType paramType) {
 
        this(name,type,location);
-       
-       if(type == ANON){
-          	addAnonParams(((AAnonType)paramType).getParamsAnon());
-          	if (((AAnonType)paramType).getReturnTypeAnon() != null) {
-
-          		((AAnonType)paramType).getReturnTypeAnon().apply(new DepthFirstAdapter() {
-
-                    @Override
-                    public void caseAReturnTypeAnon(
-                            AReturnTypeAnon node) {
-
-                        Declaration.this.lambdaReturnType = Type.get(node.getType());
-                    }
-                });
-            }
-       }
-       
+       this.lambdaInfo = new LambdaInfo(paramType); 
+	}
+    
+    public LambdaInfo getLambda(){
+    	return lambdaInfo;
     }
-    
-    private void addAnonParams(PParamsAnon params){
-    	//PParams params = node.getParams();
-        if (params != null) {
-            params.apply(new DepthFirstAdapter() {
-
-                @Override
-                public void caseAParamAnon(
-                        AParamAnon node) {
-                    Declaration.this.lambdaParameters.add(Type.get(node.getType()));
-                    
-                }
-            });
-        }
-        
-    }
-    
-    
-    public ALambdaTerm getLambda(){
-    	return lambdaDefinition;
-    }
-    
-    public LinkedList<Type> getAnonParameters(){
-    	return lambdaParameters;
-    }
-    
-    public Type getAnonReturnType(){
-    	return lambdaReturnType;
-    }
-    
 
     public String getName() {
 

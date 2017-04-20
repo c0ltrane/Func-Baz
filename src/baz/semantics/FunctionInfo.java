@@ -49,28 +49,6 @@ public class FunctionInfo {
         
     }
     
-    public FunctionInfo(LambdaValue lambda){
-    	ALambdaTerm node = lambda.getLambda();
-    	this.definition = node.getBlock();
-    	addParams(node.getParams());
-    	if (node.getReturnType() != null) {
-
-            node.getReturnType().apply(new DepthFirstAdapter() {
-
-                @Override
-                public void caseAReturnType(
-                        AReturnType node) {
-
-                    FunctionInfo.this.returnType = Type.get(node.getType());
-                }
-            });
-        }
-        else {
-            this.returnType = VOID;
-        }
-    	
-    }
-    
     private void addParams(PParams params){
         if (params != null) {
             params.apply(new DepthFirstAdapter() {
@@ -109,7 +87,7 @@ public class FunctionInfo {
         Iterator<Value> argIterator = args.iterator();
 
         for (Declaration param : this.params) {
-            frame.setVariable(param.getName(), argIterator.next());
+            frame.addVariable(param.getName(), argIterator.next());
         }
     }
 

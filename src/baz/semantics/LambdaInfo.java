@@ -64,6 +64,11 @@ public class LambdaInfo {
       	}
     }
     
+    public LambdaInfo(
+            LambdaValue node) {
+    	this(node.getLambda());
+    }
+    
    
     private void addParams(PParams params){
         if (params != null) {
@@ -114,7 +119,7 @@ public class LambdaInfo {
         Iterator<Value> argIterator = args.iterator();
 
         for (Declaration param : this.params) {
-            frame.setVariable(param.getName(), argIterator.next());
+            frame.addVariable(param.getName(), argIterator.next());
         }
     }
 
@@ -128,13 +133,6 @@ public class LambdaInfo {
         return this.params.size();
     }
 
-    public void populateScope(
-            Scope scope) {
-
-        for (Declaration declaration : this.params) {
-            scope.addVariable(declaration);
-        }
-    }
     
     public void setReturnType(){
     	

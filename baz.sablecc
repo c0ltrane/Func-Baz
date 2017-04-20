@@ -34,6 +34,7 @@ Tokens
   colon = ':';
   arrow = '->';
 
+  main = 'main';
   do = 'do';
   else = 'else';
   fun = 'fun';
@@ -65,7 +66,7 @@ Ignored Tokens
 Productions
 
   program =
-    [funcs]:func* block;
+    [funcs]:func* main block;
 
   func =
     fun [name]:id l_par params? r_par return_type? block;

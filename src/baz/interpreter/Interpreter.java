@@ -75,7 +75,7 @@ public class Interpreter
             AProgram node) {
 
         // mettre en place un Frame pour le programme principal
-        this.currentFrame = new Frame(null, null);
+        this.currentFrame = new Frame(null, (FunctionInfo)null);
 
         // ne visiter que les instructions du programme principal
         visit(node.getBlock());
@@ -92,7 +92,8 @@ public class Interpreter
 
         // assigne la variable
         String name = node.getId().getText();
-        this.currentFrame.setVariable(name, value);
+
+        this.currentFrame.addVariable(name, value);
     }
 
     @Override
@@ -453,29 +454,13 @@ public class Interpreter
             ACallTerm node) {
 
     	Frame oldFrame = this.currentFrame;
-         
-        Frame newFrame;
-
-        FunctionInfo functionInfo = this.functionTable
-                .getFunctionInfo(node.getId().getText());
         
-        boolean isLambdaExp = functionInfo == null;
-
-        if(isLambdaExp){
-        	Value lambdaExp = this.currentFrame.getVariable(node.getId());
-        	
-        	functionInfo = new FunctionInfo((LambdaValue)lambdaExp);
-        	newFrame = ((LambdaValue)lambdaExp).getEnvironment();
-
-        }
-        else{
-        	newFrame = new Frame(oldFrame, functionInfo);
-        }
-       
-
-        // mémorise la l'emplacement
+        Frame newFrame;
+        
         oldFrame.setCallLocation(node.getId());
 
+        LambdaInfo lambdaInfo = null;
+        
         // évalue les arguments
         LinkedList<Value> args = new LinkedList<>();
         if (node.getArgs() != null) {
@@ -490,16 +475,41 @@ public class Interpreter
                 args.add(eval(aAdditionalArg.getExp()));
             }
         }
-      
-        // initialise les paramètres formels
-        functionInfo.setParams(args, newFrame);
+
+        FunctionInfo functionInfo = this.functionTable
+                .getFunctionInfo(node.getId().getText());
+        
+        boolean isLambdaExp = functionInfo == null;
+
+        if(isLambdaExp){
+        	Value lambdaExp = this.currentFrame.getVariable(node.getId());
+        	Frame lexicalEnv = ((LambdaValue) lambdaExp).getEnvironment();
+        	
+        	lambdaInfo = new LambdaInfo((LambdaValue)lambdaExp);
+        	newFrame = new Frame(oldFrame,lexicalEnv, lambdaInfo);
+        	lambdaInfo.setParams(args, newFrame);
+
+        }
+        else{
+        	newFrame = new Frame(oldFrame, functionInfo);
+            functionInfo.setParams(args, newFrame);
+
+        }
+        
 
         // exécute la fonction
 
         this.currentFrame = newFrame;
-
+        
         try {
-            visit(functionInfo.getBlock());
+        	if(isLambdaExp){
+        		visit(lambdaInfo.getBlock());
+        	}
+
+        	else{
+        		//System.out.println("visit function");
+        		visit(functionInfo.getBlock());
+        	}
         }
         catch (ReturnException e) {
         }

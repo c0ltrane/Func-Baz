@@ -18,7 +18,7 @@ public class SemanticVerifier
 
     private FunctionInfo currentFunction;
     
-    private LambdaInfo currentLambdaInfo;
+    private LambdaInfo lambda;
 
     private Type result;
 
@@ -124,8 +124,8 @@ public class SemanticVerifier
         
         if(type == ANON){
         	//this.lambdaTable.addLambda(currentLambdaInfo, node.getId().getText());
-        	this.currentScope.addVariable(new Declaration(node.getId().getText(), type, node.getId(),this.currentLambdaInfo));
-            this.currentLambdaInfo = null;
+        	this.currentScope.addVariable(new Declaration(node.getId().getText(), type, node.getId(),this.lambda));
+            this.lambda = null;
 
         }
         else{
@@ -208,7 +208,7 @@ public class SemanticVerifier
                         node.getReturn());
             }
             if(type == ANON){
-            	this.currentFunction.setReturnedLambda(this.currentLambdaInfo);
+            	this.currentFunction.setReturnedLambda(this.lambda);
             }
         }
     }
@@ -662,24 +662,24 @@ public class SemanticVerifier
             ALambdaTerm node) {
     	
         this.result = ANON;
-        this.currentLambdaInfo = new LambdaInfo(node);
+        this.lambda = new LambdaInfo(node);
     }
 
     @Override
     public void caseACallTerm(
             ACallTerm node) {
     	Type type;        
-    	Declaration lambda = null;
+    	Declaration anonFunction = null;
     	
         
         FunctionInfo functionInfo = this.functionTable
                 .getFunctionInfo(node.getId().getText());
         
         if(functionInfo == null){
-        	lambda = this.currentScope.getVariable(node.getId());
+        	anonFunction = this.currentScope.getVariable(node.getId());
         }
         
-        if (functionInfo == null && lambda == null) {
+        if (functionInfo == null && anonFunction == null) {
             throw new SemanticException(
                     "unknown function " + node.getId().getText(), node.getId());
         }
@@ -703,9 +703,9 @@ public class SemanticVerifier
 
         // vérifie les arguments
         
-        if(lambda != null){
+        if(anonFunction != null){
         	//System.out.println(lambda.getName());
-        	LambdaInfo lambdaInfo = lambda.getLambda();
+        	LambdaInfo lambdaInfo = anonFunction.getLambda();
         	lambdaInfo.verifyArgs(args, node.getLPar());
         	type = lambdaInfo.getReturnType();
         }
@@ -717,7 +717,7 @@ public class SemanticVerifier
         }
 
         if(type == ANON){
-        	this.currentLambdaInfo = functionInfo.getReturnedLambda();
+        	this.lambda = functionInfo.getReturnedLambda();
         }
         this.result = type;
         

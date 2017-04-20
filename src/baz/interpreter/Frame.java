@@ -9,8 +9,12 @@ import baz.syntax.node.*;
 public class Frame {
 
     private Frame parent;
+    
+    private Frame lexicalEnv;
 
     private FunctionInfo functionInfo;
+    
+    private LambdaInfo lambdaInfo;
 
     private HashMap<String, Value> variables = new HashMap<>();
 
@@ -25,12 +29,37 @@ public class Frame {
         this.parent = parent;
         this.functionInfo = functionInfo;
     }
+    
+    public Frame(
+            Frame parent, Frame lexicalEnv,
+            LambdaInfo lambdaInfo) {
+
+        this.parent = parent;
+        this.lexicalEnv = lexicalEnv;
+        this.lambdaInfo = lambdaInfo;
+    }
 
     public void setVariable(
             String name,
             Value value) {
+    	
+    	if(variableExists(name)){
+        	this.variables.put(name, value);
 
-        this.variables.put(name, value);
+    	}
+    	else if(parent.variableExists(name)){
+        	this.parent.getVariables().put(name, value);
+    	}
+    	else if(lexicalEnv != null && lexicalEnv.variableExists(name)){
+        	this.lexicalEnv.getVariables().put(name, value);
+    	}
+    }
+    
+    public void addVariable(
+            String name,
+            Value value) {
+    	
+    	this.variables.put(name, value);
     }
 
     public Value getVariable(
@@ -41,21 +70,18 @@ public class Frame {
         
         if (variableExists(name)) {
             return this.variables.get(name);
-
         }
         if(parent.variableExists(name)){
             return this.parent.getVariables().get(name);
+        }
+        if(lexicalEnv != null && lexicalEnv.variableExists(name)){
+            return this.lexicalEnv.getVariables().get(name);
         }
         else{
         	throw new InterpreterException("undefined variable '" + name + "'",
                     id, this);
         }
-        /*
-        if (!this.variables.containsKey(name)) {
-            throw new InterpreterException("undefined variable '" + name + "'",
-                    id, this);
-        }
-*/
+       
     }
     
     public boolean variableExists(

@@ -9,9 +9,14 @@ fun getAnonymous():(int)->int{
   return anon(o:int): int{return o*o;};
 }
 
-fun getThree():(int)->int{
-  var a = 5;
-  return anon(a:int):int{return 3;};
+fun getFifteen():()->int{
+  var t = 3;
+  return anon():int{var n = 5;return n*3;};
+}
+
+fun printSomething(){
+  print "Goodbye!!"; 
+  return;
 }
 
 fun greet(name: string): string{
@@ -27,45 +32,44 @@ fun bazzuka(f:(int)->int,g:(int)->int, a:int) :int{
   return f(g(a));
 }
 
-#fun counter() : ()->int{
- #  var counter = 0;
-  # return anon():int{ return counter = counter + 1;};
-#}
+fun counter() : ()->int{
+   var counter = 0;
+   return anon():int{ return counter = counter + 1;};
+}
+
+fun buildString(f:()->string, g:(string)->string):string{
+   return g(f());
+}
 
 
 
-{
-
-  #print greet("programmer");
-  print;
-
+main {
   var n = 3;
-  
-  print "test timestwo";
+
+  print greet("programmer");
   print;
-  var timestwo = times(2);
-  print timestwo(5); print;
-  print timestwo(7); print;
-  
+ 
+  print n; print;
+ 
   print "test getThree"; print;
-  var hereIsThree = getThree();
-  print hereIsThree(8); print;
+  var hereIsFifteen = getFifteen();
+  print hereIsFifteen(); print;
   
-  print "test counter"; print;
-  #var plusOne = counter();
-  #print plusOne(); print;
-  #print plusOne(); print;
   
-  print "test getAnonymous";
-  print;
+  print "test getAnonymous"; print;
   var anonymous = getAnonymous();
-  print anonymous(8);
-  print;
+  print anonymous(8); print;
   
+ 
+ 
+  print "test f"; print;
   var f = anon(x:int,y:int):int {return x*y;};
+  print f(9,8); print;
+  
   
   print "test 1 bar"; print;
-  print bar(f,n);
+  print bar(f,n); print;
+  print bar(f,11); print;
   print;
   
   print "test 2 bar"; print;
@@ -83,5 +87,33 @@ fun bazzuka(f:(int)->int,g:(int)->int, a:int) :int{
   print "test bazzuka"; print;
   print bazzuka(e,e,2);
   print;
-    
+
+  
+  print "test times";print;
+  var timestwo = times(2);
+  print timestwo(5); print;
+  print timestwo(7); print;
+  var timesTen = times(10);
+  print timesTen(10); print;
+  
+  print "test counter"; print;
+  var plusOne = counter();
+  print plusOne(); print;
+  print plusOne(); print;
+  
+  print "test counter2"; print;
+  var plusOneOne = counter();
+  print plusOneOne(); print;
+  print plusOneOne(); print;
+  print plusOne(); print;
+  print plusOneOne(); print;
+  
+  print "test build string"; print;
+  var sa = anon():string{return "foo";};
+  var sb = anon(pb:string):string{return pb + "bar";};
+  
+  print buildString(sa,sb); print;
+  
+  printSomething();
+   
 }

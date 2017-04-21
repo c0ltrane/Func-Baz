@@ -25,8 +25,15 @@ fun greet(name: string):string{
   return "Hello mister " + name;
 }
 
+fun getTwo():()->int{
+  return anon():int {
+    return 2;
+  };
+}
+
 fun bar(f:(int,int)->int, o: int) :int{
-  return f(o,o);
+  var t = getTwo();
+  return f(o,t());
 }
 
 # composition de fonctions
@@ -43,6 +50,30 @@ fun counter() : ()->int{
 fun buildString(f:()->string, g:(string)->string):string{
    return g(f());
 }
+
+
+fun closure():()->int {
+  var a = 0;
+  return anon():int {
+    return a = a + 1;
+  };
+}
+
+fun metaClosure():()->int {
+  var b = 1;
+  var clos = closure();
+  return anon(): int {
+    return b = b + clos();
+  };
+} 
+
+fun factorial(n:int):int{
+  if n == 0 then {
+    return 1;
+  }
+  return n * factorial(n-1);
+}
+
 
 
 
@@ -76,7 +107,7 @@ main {
   print;
   
   print "test 2 bar"; print;
-  print bar(anon(x:int,y:int):int {return x*y+1;},n);
+  print bar(anon(x:int,y:int):int {return x*y;},n);
   print;
   
   print "test f"; print;
@@ -115,7 +146,22 @@ main {
   var sa = anon():string{return "foo";};
   var sb = anon(pb:string):string{return pb + "bar";};
   
+  
+  print "test buildString"; print;
   print buildString(sa,sb); print;
+  
+  print "test metaClosure"; print;
+  var meta = metaClosure();
+  print meta(); print;
+  print meta(); print;
+  print meta(); print;
+  
+  print "test factorial"; print;
+  print factorial(4); print;
+  print factorial(5); print;
+  
+  
+  
   
   printSomething();
    

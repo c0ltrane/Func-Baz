@@ -39,7 +39,7 @@ public class Frame {
         this.lambdaInfo = lambdaInfo;
     }
     
-    // copy constructor for closure frame
+    // copy constructor for closure's lexical environment frame
     public Frame(Frame lexicalEnvironment){
     	this.variables = new HashMap<String,Value>(lexicalEnvironment.getVariables());
     	this.returnValue = lexicalEnvironment.getReturnValue(null);
@@ -53,9 +53,6 @@ public class Frame {
     	if(variableExists(name)){
         	this.variables.put(name, value);
 
-    	}
-    	else if(parent.variableExists(name)){
-        	this.parent.getVariables().put(name, value);
     	}
     	else if(lexicalEnv != null && lexicalEnv.variableExists(name)){
         	this.lexicalEnv.getVariables().put(name, value);
@@ -78,9 +75,6 @@ public class Frame {
         if (variableExists(name)) {
             return this.variables.get(name);
         }
-        if(parent.variableExists(name)){
-            return this.parent.getVariables().get(name);
-        }
         if(lexicalEnv != null && lexicalEnv.variableExists(name)){
             return this.lexicalEnv.getVariables().get(name);
         }
@@ -93,12 +87,7 @@ public class Frame {
     
     public boolean variableExists(
             String name) {
-
-        if (this.variables.containsKey(name)) {
-            return true;
-        }
-
-        return false;
+    	return this.variables.containsKey(name);
     }
     
     public HashMap<String,Value> getVariables(){

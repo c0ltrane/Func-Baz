@@ -38,6 +38,13 @@ public class Frame {
         this.lexicalEnv = lexicalEnv;
         this.lambdaInfo = lambdaInfo;
     }
+    
+    // copy constructor for closure frame
+    public Frame(Frame lexicalEnvironment){
+    	this.variables = new HashMap<String,Value>(lexicalEnvironment.getVariables());
+    	this.returnValue = lexicalEnvironment.getReturnValue(null);
+   
+    }
 
     public void setVariable(
             String name,

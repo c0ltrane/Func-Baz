@@ -443,7 +443,7 @@ public class Interpreter
     public void caseALambdaTerm(
             ALambdaTerm node) {
 
-    	LambdaValue lambda = new LambdaValue(node, this.currentFrame);
+    	LambdaValue lambda = new LambdaValue(node, new Frame(this.currentFrame));
     	this.result = lambda;
     	
     }
@@ -507,7 +507,6 @@ public class Interpreter
         	}
 
         	else{
-        		//System.out.println("visit function");
         		visit(functionInfo.getBlock());
         	}
         }

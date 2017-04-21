@@ -704,7 +704,6 @@ public class SemanticVerifier
         // vérifie les arguments
         
         if(anonFunction != null){
-        	//System.out.println(lambda.getName());
         	LambdaInfo lambdaInfo = anonFunction.getLambda();
         	lambdaInfo.verifyArgs(args, node.getLPar());
         	type = lambdaInfo.getReturnType();

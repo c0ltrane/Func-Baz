@@ -9,9 +9,9 @@ fun getAnonymous():(int)->int{
   return anon(o:int): int{return o*o;};
 }
 
-fun getFifteen():()->int{
-  var t = 3;
-  return anon():int{var n = 5;return n*3;};
+fun getFortyTwo():()->int{
+  var n = 42;
+  return anon():int{return n;};
 }
 
 fun printSomething(){
@@ -20,8 +20,6 @@ fun printSomething(){
 }
 
 fun greet(name: string):string{
-
-  
   return "Hello mister " + name;
 }
 
@@ -75,6 +73,23 @@ fun factorial(n:int):int{
 }
 
 
+fun recClosure(f:()->int, e:int,c:int):int {
+  var a = 0;
+  if e == 0 then {
+    return 0;
+  }
+  var t = anon():int { return a = a + 1;};
+  var sum = 0;
+  var counter = c;
+  
+  #with c calls to f() we get the sum from 1 to c
+  while counter > 0 do {
+    sum = sum + f();
+    counter = counter - 1;
+  }
+  return sum + recClosure(t,e-1,kk);
+}
+
 
 
 main {
@@ -82,36 +97,45 @@ main {
 
   print greet("programmer");
   print;
- 
-  print n; print;
- 
-  print "test getThree"; print;
-  var hereIsFifteen = getFifteen();
-  print hereIsFifteen(); print;
   
+  print;
+ 
+  
+  print "test get the answer to life the universe and everything else "; print;
+  var hereIsFortyTwo = getFortyTwo();
+  print hereIsFortyTwo(); print;
+  
+  print;
   
   print "test getAnonymous"; print;
   var anonymous = getAnonymous();
   print anonymous(8); print;
   
- 
+  print;
  
   print "test f"; print;
   var f = anon(x:int,y:int):int {return x*y;};
   print f(9,8); print;
   
+  print;
   
   print "test 1 bar"; print;
   print bar(f,n); print;
   print bar(f,11); print;
   print;
   
+  print;
+  
   print "test 2 bar"; print;
   print bar(anon(x:int,y:int):int {return x*y;},n);
   print;
   
+  print;
+  
   print "test f"; print;
   print f(n,n);
+  print;
+  
   print;
   
   var y = 1;
@@ -122,18 +146,25 @@ main {
   print bazzuka(e,e,2); print;
   print bazzuka(e,e,1); print;
 
+  print;
   
   print "test times";print;
+  print " application partielle de fonction";print;
   var timestwo = times(2);
   print timestwo(5); print;
   print timestwo(7); print;
   var timesTen = times(10);
   print timesTen(10); print;
   
+  print;
+  
+  print "encapsulation de variable"; print;
   print "test counter"; print;
   var plusOne = counter();
   print plusOne(); print;
   print plusOne(); print;
+  
+  print;
   
   print "test counter2"; print;
   var plusOneOne = counter();
@@ -142,13 +173,18 @@ main {
   print plusOne(); print;
   print plusOneOne(); print;
   
+  print;
+  
   print "test build string"; print;
   var sa = anon():string{return "foo";};
   var sb = anon(pb:string):string{return pb + "bar";};
   
+  print;
   
   print "test buildString"; print;
   print buildString(sa,sb); print;
+
+  print;
   
   print "test metaClosure"; print;
   var meta = metaClosure();
@@ -156,12 +192,22 @@ main {
   print meta(); print;
   print meta(); print;
   
+  print;
+  
   print "test factorial"; print;
   print factorial(4); print;
   print factorial(5); print;
   
+  print;
   
+  print "test recursive Closure"; print;
+  # retourne m*(n(n+1)/2) ou n est le nombre dappels de fermetures dans la fonction recClosure
+  # ici on fait 4 appels de fermeture dans la fonction
+  var m = 10;
+  var k = 4;
+  print recClosure(anon():int{return 0;},m+1,k); print;
   
+  print;
   
   printSomething();
    

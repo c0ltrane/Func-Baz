@@ -2,16 +2,16 @@
 
 
 fun times(param: int):(int)->int {
-    return anon(i: int): int { return i*param; };
+    return fun(i: int): int { return i*param; };
 } 
 
 fun getAnonymous():(int)->int{
-  return anon(o:int): int{return o*o;};
+  return fun(o:int): int{return o*o;};
 }
 
 fun getFortyTwo():()->int{
   var n = 42;
-  return anon():int{return n;};
+  return fun():int{return n;};
 }
 
 fun printSomething(){
@@ -24,7 +24,7 @@ fun greet(name: string):string{
 }
 
 fun getTwo():()->int{
-  return anon():int {
+  return fun():int {
     return 2;
   };
 }
@@ -42,7 +42,7 @@ fun bazzuka(f:(int)->int,g:(int)->int, a:int) :int{
 
 fun counter() : ()->int{
    var counter = 0;
-   return anon():int{ return counter = counter + 1;};
+   return fun():int{ return counter = counter + 1;};
 }
 
 fun buildString(f:()->string, g:(string)->string):string{
@@ -52,7 +52,7 @@ fun buildString(f:()->string, g:(string)->string):string{
 
 fun closure():()->int {
   var a = 0;
-  return anon():int {
+  return fun():int {
     return a = a + 1;
   };
 }
@@ -60,7 +60,7 @@ fun closure():()->int {
 fun metaClosure():()->int {
   var b = 1;
   var clos = closure();
-  return anon(): int {
+  return fun(): int {
     return b = b + clos();
   };
 } 
@@ -78,7 +78,7 @@ fun recClosure(f:()->int, e:int,c:int):int {
   if e == 0 then {
     return 0;
   }
-  var t = anon():int { return a = a + 1;};
+  var t = fun():int { return a = a + 1;};
   var sum = 0;
   var counter = c;
   
@@ -87,7 +87,7 @@ fun recClosure(f:()->int, e:int,c:int):int {
     sum = sum + f();
     counter = counter - 1;
   }
-  return sum + recClosure(t,e-1,kk);
+  return sum + recClosure(t,e-1,c);
 }
 
 
@@ -114,7 +114,7 @@ main {
   print;
  
   print "test f"; print;
-  var f = anon(x:int,y:int):int {return x*y;};
+  var f = fun(x:int,y:int):int {return x*y;};
   print f(9,8); print;
   
   print;
@@ -127,7 +127,7 @@ main {
   print;
   
   print "test 2 bar"; print;
-  print bar(anon(x:int,y:int):int {return x*y;},n);
+  print bar(fun(x:int,y:int):int {return x*y;},n);
   print;
   
   print;
@@ -140,7 +140,7 @@ main {
   
   var y = 1;
   
-  var e = anon(x:int):int{return y*x*x;};
+  var e = fun(x:int):int{return y*x*x;};
   
   print "test bazzuka"; print;
   print bazzuka(e,e,2); print;
@@ -176,8 +176,8 @@ main {
   print;
   
   print "test build string"; print;
-  var sa = anon():string{return "foo";};
-  var sb = anon(pb:string):string{return pb + "bar";};
+  var sa = fun():string{return "foo";};
+  var sb = fun(pb:string):string{return pb + "bar";};
   
   print;
   
@@ -205,7 +205,7 @@ main {
   # ici on fait 4 appels de fermeture dans la fonction
   var m = 10;
   var k = 4;
-  print recClosure(anon():int{return 0;},m+1,k); print;
+  print recClosure(fun():int{return 0;},m+1,k); print;
   
   print;
   

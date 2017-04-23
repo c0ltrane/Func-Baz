@@ -166,7 +166,7 @@ Productions
     {false} false |
     {par} l_par exp r_par |
     {call} id l_par args? r_par | 
-    {lambda} anon l_par params? r_par return_type? block;
+    {lambda} fun l_par params? r_par return_type? block;
 
   args =
     exp [additional_args]:additional_arg*;

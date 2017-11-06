@@ -12,3 +12,5 @@ Execution steps:
   
       $ java -jar /path/to/sablecc-3.7/lib/sablecc.jar -d src/ productions.sablecc
   * Execute the java binary with your new language source code file as parameter
+
+[Link](http://slides.com/joseki101/deck-2#/) to slide show presentation of the project

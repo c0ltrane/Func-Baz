@@ -1,6 +1,8 @@
 # FunkBaz
-A compiler for the language "FunkBaz" created with the help of SableCC an open source compiler generator in Java.
 
+### What the hell is this?
+
+A compiler for the language "FunkBaz" created with the help of SableCC an open source compiler generator in Java.
 It is the result of a school project made for the Introduction to Compilers class at UQAM winter 2017.
 
 FunkBaz is a typed language that supports the use of anonymous functions and closures.

@@ -5,7 +5,7 @@ It is the result of a school project made for the Introduction to Compilers clas
 
 FunkBaz is a typed language that supports the use of anonymous functions and closures.
 
-Steps for building and executing a funkbaz program:
+### Steps for building and executing a funkbaz program:
 
   * First download the sablecc jar executable from the [sablecc website](http://www.sablecc.org/downloads).
   
